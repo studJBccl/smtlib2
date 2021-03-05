@@ -1,9 +1,12 @@
+{-# language LambdaCase #-}
+
 module Language.SMTLib2.Composite.Class where
 
 import Language.SMTLib2
 import Language.SMTLib2.Internals.Embed
 
 import Data.GADT.Compare
+import Data.Type.Equality ((:~:)(Refl))
 import Data.GADT.Show
 import Data.Proxy
 import Data.Functor.Identity
@@ -162,3 +165,5 @@ defaultEq descr x y = do
       f <- lift false
       tell [f]
       return undefined
+
+unJust m = m >>= \ case Just x -> return x

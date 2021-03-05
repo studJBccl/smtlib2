@@ -18,8 +18,8 @@ Source-Repository head
 
 Library
   Build-Depends: base >= 4 && < 5,
-    constraints, mtl, containers, template-haskell, dependent-map,
-    dependent-sum>0.7, some
+                 constraints, mtl, containers, template-haskell,
+                 dependent-map, dependent-sum, some
   Extensions:
              GADTs
              FlexibleContexts

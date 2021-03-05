@@ -12,6 +12,7 @@ import Language.SMTLib2.Composite.Convert
 import Language.SMTLib2.Internals.Embed
 
 import Data.GADT.Compare
+import Data.Type.Equality ((:~:))
 import Data.GADT.Show
 import Data.Monoid
 import qualified Data.Vector as Vec
@@ -253,11 +254,11 @@ instance IsStack StackList StackListIndex where
                     case cond++pushCond of
                       [] -> return (i+1,el)
                       [c] -> do
-                        Just nel <- compITE c el (els Vec.! (i+1))
+                        nel <- unJust $ compITE c el (els Vec.! (i+1))
                         return (i+1,nel)
                       cs -> do
                         c <- and' cs
-                        Just nel <- compITE c el (els Vec.! (i+1))
+                        nel <- unJust $ compITE c el (els Vec.! (i+1))
                         return (i+1,nel)
                 ) existing
     let els1 = els Vec.// upd
@@ -270,7 +271,7 @@ instance IsStack StackList StackListIndex where
       [] -> return top1
       cs -> do
         c <- and' cs
-        Just res <- compITE c top1 top
+        res <- unJust $ compITE c top1 top
         return res
     return $ Stack (StackList (CompList els2)) (StackListIndex top2)
   stackPop popCond (Stack (StackList (CompList els)) (StackListIndex top)) = do
@@ -284,7 +285,7 @@ instance IsStack StackList StackListIndex where
       [] -> return top1
       cs -> do
         c <- and' cs
-        Just res <- compITE c top1 top
+        res <- unJust $ compITE c top1 top
         return res
     let nels = if null popCond
                then case find (\(NoComp i,cond) -> i==sz-1 && null cond) lst of
@@ -326,7 +327,7 @@ instance (Num (Value tp)) => IsStack StackList (StackArrayIndex tp) where
                           rc <- case pushCond of
                             [] -> return c
                             _ -> and' (c:pushCond)
-                          Just nel <- compITE rc el cel
+                          nel <- unJust $ compITE rc el cel
                           return nel
                       ) els
     topTp <- fmap (\tp -> tp top) $ embedTypeOf
@@ -397,7 +398,7 @@ instance (Num (Value tp)) => IsStack (StackArray tp) (StackArrayIndex tp) where
       [] -> return Nothing
       [c] -> return $ Just c
       cs -> fmap Just $ and' cs
-    Just narr <- storeArrayCond rcond arr (top:::Nil) el
+    narr <- unJust $ storeArrayCond rcond arr (top:::Nil) el
     return $ Stack (StackArray narr) (StackArrayIndex (Comp ntop))
   stackPop popCond (Stack arr (StackArrayIndex (Comp top))) = do
     topTp <- fmap (\tp -> tp top) $ embedTypeOf
@@ -453,7 +454,7 @@ instance (Num (Value tp)) => IsStack (StackArray tp) StackListIndex where
       [] -> return top1
       cs -> do
         c <- and' cs
-        Just res <- compITE c top1 top
+        res <- unJust $ compITE c top1 top
         return res
     ch <- getChoices top
     narr <- foldlM (\carr (NoComp i,cond) -> do
@@ -462,7 +463,7 @@ instance (Num (Value tp)) => IsStack (StackArray tp) StackListIndex where
                          [c] -> return $ Just c
                          cs -> fmap Just $ and' cs
                        ri <- constant $ fromIntegral $ i+1
-                       Just narr <- storeArrayCond rcond carr (ri:::Nil) el
+                       narr <- unJust $ storeArrayCond rcond carr (ri:::Nil) el
                        return narr
                    ) arr ch
     return $ Stack (StackArray narr) (StackListIndex top2)
@@ -475,7 +476,7 @@ instance (Num (Value tp)) => IsStack (StackArray tp) StackListIndex where
       [] -> return top1
       cs -> do
         c <- and' cs
-        Just res <- compITE c top1 top
+        res <- unJust $ compITE c top1 top
         return res
     return $ Stack arr (StackListIndex top2)
   stackTop = return . _stackTop

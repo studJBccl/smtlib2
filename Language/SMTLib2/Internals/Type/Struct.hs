@@ -6,6 +6,7 @@ import qualified Language.SMTLib2.Internals.Type.List as List
 
 import Prelude hiding (mapM,insert)
 import Data.GADT.Compare
+import Data.Type.Equality ((:~:)(Refl))
 import Data.GADT.Show
 import Data.Functor.Identity
 

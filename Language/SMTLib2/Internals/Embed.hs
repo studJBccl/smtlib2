@@ -13,6 +13,7 @@ import Control.Monad.State
 import Control.Monad.Except
 import Control.Monad.Writer
 import Data.GADT.Compare
+import Data.Type.Equality ((:~:)(Refl))
 import Data.GADT.Show
 import qualified Data.Dependent.Map as DMap
 

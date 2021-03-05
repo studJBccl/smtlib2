@@ -6,6 +6,7 @@ import Language.SMTLib2.Composite.Container
 
 import Data.GADT.Show
 import Data.GADT.Compare
+import Data.Type.Equality ((:~:)(Refl))
 
 newtype CompEither a b (e :: Type -> *) = CompEither { compEither :: Either (a e) (b e) }
 

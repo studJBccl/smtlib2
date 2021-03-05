@@ -9,6 +9,7 @@ import Data.List (sortBy,sort)
 import Data.Ord (comparing)
 import Data.Functor.Identity
 import Data.GADT.Compare
+import Data.Type.Equality ((:~:)(Refl))
 import Data.GADT.Show
 import Data.Foldable
 import Data.Maybe (catMaybes)
@@ -257,7 +258,7 @@ byteReadITE ((r,c):rs) = do
     Just full1 -> case fullRead rest of
       Nothing -> return $ Just full1
       Just full2 -> do
-        Just nfull <- compITE c full1 full2
+        nfull <- unJust $ compITE c full1 full2
         return $ Just nfull
   imprec <- maybeITE c (readImprecision r) (readImprecision rest)
   return $ ByteRead over outside full imprec
@@ -269,7 +270,7 @@ byteReadITE ((r,c):rs) = do
           -> m (Map Integer (a e,e BoolType))
     merge c notc x y
       = sequence $ Map.mergeWithKey (\_ (el1,c1) (el2,c2) -> Just $ do
-                                        Just nel <- compITE c el1 el2
+                                        nel <- unJust $ compITE c el1 el2
                                         cond <- c .&. (c1 .|. c2)
                                         return (nel,cond))
         (fmap (\(el,c') -> do
@@ -293,7 +294,7 @@ byteWriteITE ((w,c):ws) = do
     Just full1 -> case fullWrite rest of
       Nothing -> return $ Just full1
       Just full2 -> do
-        Just nfull <- compITE c full1 full2
+        nfull <- unJust $ compITE c full1 full2
         return $ Just nfull
   imprec <- maybeITE c (writeImprecision w) (writeImprecision rest)
   return $ ByteWrite over outside full imprec
@@ -307,7 +308,7 @@ byteWriteITE ((w,c):ws) = do
     merge c notc ((xrest,xcond):xs) ((yrest,ycond):ys)
       = case compCompare xrest yrest of
       EQ -> do
-        Just nrest <- compITE c xrest yrest
+        nrest <- unJust $ compITE c xrest yrest
         ncond <- (c .&. xcond) .|. (notc .&. ycond)
         ns <- merge c notc xs ys
         return $ (nrest,ncond):ns

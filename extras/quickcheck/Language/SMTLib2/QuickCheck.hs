@@ -8,7 +8,7 @@ import Language.SMTLib2.Internals.Type.List (List(..))
 import qualified Language.SMTLib2.Internals.Type.List as List
 import Language.SMTLib2.Internals.Type.Nat
 
-import Test.QuickCheck hiding (Args)
+import Test.QuickCheck hiding (Args, Function, Fun)
 import Test.QuickCheck.Monadic
 import Data.Dependent.Map (DMap)
 import qualified Data.Dependent.Map as DMap
@@ -18,6 +18,7 @@ import Data.Proxy
 import Data.Functor.Identity
 import Data.GADT.Show
 import Data.GADT.Compare
+import Data.Type.Equality ((:~:)(Refl))
 import Control.Monad.State.Strict
 import qualified GHC.TypeLits as TL
 

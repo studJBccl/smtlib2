@@ -14,6 +14,7 @@ import Control.Monad.State
 import Data.Functor.Identity
 import Data.GADT.Show
 import Data.GADT.Compare
+import Data.Type.Equality ((:~:)(Refl))
 
 data AnyList (e :: Type -> *) = forall tps. AnyList (List e tps)
 

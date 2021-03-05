@@ -1,3 +1,5 @@
+{-# language UndecidableInstances, LambdaCase #-}
+
 module Language.SMTLib2.Composite.Linear where
 
 import Language.SMTLib2
@@ -27,11 +29,10 @@ delinear lin = do
   const' <- mapExprs constant (linConst lin)
   ps <- mapM (\(c,x) -> do
                  c' <- mapExprs constant c
-                 Just r <- compositeMult c' x
+                 r <- unJust $ compositeMult c' x
                  return r
              ) $ linear lin
-  Just res <- compositeSum $ const':ps
-  return res
+  unJust $ compositeSum (const':ps)
 
 delinearType :: (IsNumeric c,GetType e) => Linear c e -> c Repr
 delinearType lin = runIdentity $ delinear (compType lin)

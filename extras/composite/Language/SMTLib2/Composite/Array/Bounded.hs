@@ -1,3 +1,5 @@
+{-# language UndecidableInstances #-}
+
 module Language.SMTLib2.Composite.Array.Bounded where
 
 import Language.SMTLib2 hiding (select,store)
@@ -6,6 +8,7 @@ import Language.SMTLib2.Composite.Domains
 
 import Data.Monoid
 import Data.GADT.Compare
+import Data.Type.Equality ((:~:)(Refl))
 import Data.GADT.Show
 import Prelude hiding (Bounded)
 
@@ -90,7 +93,7 @@ instance (IsArray arr idx,IsRanged idx,IsNumSingleton idx)
            then return AlwaysError
            else do
       ridx <- compositeFromValue idx'
-      Just errCond <- compositeGEQ ridx (bound arr)
+      errCond <- unJust $ compositeGEQ ridx (bound arr)
       return $ SometimesError errCond
 
 instance (IsArray arr idx,IsRanged idx,IsNumSingleton idx)
@@ -107,7 +110,7 @@ instance (IsArray arr idx,IsRanged idx,IsNumSingleton idx)
       else if nullRange insideRange
            then return AlwaysError
            else do
-      Just errCond <- compositeGEQ idx (bound arr)
+      errCond <- unJust $ compositeGEQ idx (bound arr)
       return $ SometimesError errCond
   arraySize arr = return $ bound arr
 

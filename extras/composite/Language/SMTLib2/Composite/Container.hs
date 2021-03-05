@@ -1,4 +1,5 @@
-{-# LANGUAGE PolyKinds #-}
+{-# LANGUAGE PolyKinds, LambdaCase #-}
+
 module Language.SMTLib2.Composite.Container (
   -- * Container class
   Container(..),
@@ -286,17 +287,19 @@ withMuxer' :: (Embed m e,Monad m)
                Muxed bs e -> st -> m (Muxed bs e,st))
            -> m (a e,st)
 withMuxer' NoMux x st f = do
-  (NoMuxed,nst) <- f NilPaths [] NoMuxed st
-  return (x,nst)
+  f NilPaths [] NoMuxed st >>= \ case
+    (NoMuxed,nst) -> 
+      return (x,nst)
 withMuxer' (Mux acc accs) x st f = case accessorHead acc of
   Nothing -> return (x,st)
   Just (path,cond,acc') -> do
     el <- pathGet path x
     (x1,(nel,nst)) <- withMuxer' accs x (el,st) $
       \paths cond' muxed (el,st) -> do
-        (Muxed nel nmuxed,nst) <- f (Paths path paths) (cond++cond')
-                                  (Muxed el muxed) st
-        return (nmuxed,(nel,nst))
+          f (Paths path paths) (cond++cond')
+                                  (Muxed el muxed) st >>= \ case
+            (Muxed nel nmuxed,nst) ->
+              return (nmuxed,(nel,nst))
     x2 <- pathSet path x1 nel
     withMuxer' (Mux acc' accs) x2 nst f
 

@@ -8,6 +8,7 @@ import Language.SMTLib2
 import qualified Language.SMTLib2.Internals.Expression as E
 
 import Data.GADT.Compare
+import Data.Type.Equality ((:~:)(Refl))
 import Data.GADT.Show
 import Control.Monad.State
 import Control.Monad.Except

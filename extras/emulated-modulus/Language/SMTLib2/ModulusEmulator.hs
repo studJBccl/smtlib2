@@ -12,6 +12,7 @@ import Language.SMTLib2.Internals.Type.List (List(..))
 
 import Data.Foldable
 import Data.GADT.Compare
+import Data.Type.Equality ((:~:)(Refl))
 import Data.GADT.Show
 import Data.Functor.Identity
 

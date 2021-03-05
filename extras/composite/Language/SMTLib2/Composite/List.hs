@@ -11,6 +11,7 @@ import Data.Vector (Vector)
 import qualified Data.Vector as Vec
 import Data.Maybe (catMaybes)
 import Data.GADT.Show
+import Data.Type.Equality ((:~:)(Refl))
 import Data.GADT.Compare
 import Text.Show
 import Data.Foldable

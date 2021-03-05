@@ -7,6 +7,7 @@ import Language.SMTLib2.Composite.Container
 
 import Data.GADT.Show
 import Data.GADT.Compare
+import Data.Type.Equality ((:~:)(Refl))
 import Data.Proxy
 import qualified Data.Map as Map
 
@@ -238,8 +239,7 @@ instance (ByteWidth a idx,ByteWidth b idx) => ByteWidth (CompTuple2 a b) idx whe
   byteWidth (CompTuple2 x y) r = do
     wx <- byteWidth x r
     wy <- byteWidth y r
-    Just r <- compositePlus wx wy
-    return r
+    unJust $ compositePlus wx wy
 
 instance (StaticByteWidth a,StaticByteAccess a el,StaticByteAccess b el,CanConcat el)
          => StaticByteAccess (CompTuple2 a b) el where
@@ -289,7 +289,7 @@ instance (StaticByteWidth a,ByteAccess a idx el,ByteAccess b idx el,CanConcat el
         let wx = staticByteWidth x
             Just vwx = compositeFromInteger wx (compType idx)
         wx' <- mapExprs constant vwx
-        Just nidx <- compositeMinus idx wx'
+        nidx <- unJust $ compositeMinus idx wx'
         ry <- byteRead y nidx sz
         return [(ry,cond)]
     byteReadITE (reads1++reads2++reads3)
@@ -323,10 +323,11 @@ instance (StaticByteWidth a,ByteAccess a idx el,ByteAccess b idx el,CanConcat el
         let szx = staticByteWidth x
             Just vszx = compositeFromInteger szx (compType idx)
         szx' <- mapExprs constant vszx
-        Just nidx <- compositeMinus idx szx'
+        nidx <- unJust $ compositeMinus idx szx'
         wy <- byteWrite y nidx el
         return [(wy { fullWrite = case fullWrite wy of
                         Nothing -> Nothing
                         Just y' -> Just $ CompTuple2 x y'
                     },cond)]
     byteWriteITE (writes1++writes2++writes3)
+

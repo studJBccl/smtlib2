@@ -9,6 +9,7 @@ import qualified Language.SMTLib2.Internals.Type.List as List
 
 import Data.GADT.Compare
 import Data.GADT.Show
+import Data.Type.Equality ((:~:)(Refl))
 import Data.List (genericLength)
 import Data.Bits
 import Data.Dependent.Map (DMap)

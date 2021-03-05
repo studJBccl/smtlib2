@@ -1,4 +1,4 @@
-{-# LANGUAGE DataKinds,GADTs,TypeFamilies,ExistentialQuantification,ScopedTypeVariables,RankNTypes #-}
+{-# LANGUAGE DataKinds,GADTs,TypeFamilies,ExistentialQuantification,ScopedTypeVariables,RankNTypes, LambdaCase #-}
 module Language.SMTLib2.Composite.Choice
   (Choice(..),ChoiceEncoding(..),RevChoice(..),
    -- * Encodings
@@ -119,7 +119,7 @@ data RevChoice enc c t where
   RevChoiceElement :: {-# UNPACK #-} !Int -> !(RevComp c tp) -> RevChoice enc c tp
 
 instance (Composite c) => Composite (Choice enc c) where
-  type RevComp (Choice enc a) = RevChoice enc a
+  type RevComp (Choice enc c) = RevChoice enc c
   foldExprs f (ChoiceSingleton x) = do
     nx <- foldExprs (\rev -> f (RevChoiceElement 0 rev)
                     ) x
@@ -411,12 +411,13 @@ instance (Composite c,GShow e) => Show (Choice enc c e) where
       gshowsPrec 11 e
 
 instance CompositeExtract c => CompositeExtract (Choice enc c) where
-  type CompExtract (Choice enc a) = CompExtract a
+  type CompExtract (Choice enc c) = CompExtract c
   compExtract f (ChoiceSingleton x) = compExtract f x
   compExtract f (ChoiceBool lst) = do
     nlst <- mapM (\(v,cond) -> do
-                     BoolValue res <- f cond
-                     return (v,res)
+                     f cond >>= \ case
+                       BoolValue res ->
+                         return (v,res)
                  ) lst
     case [ v | (v,True) <- Vec.toList nlst ] of
       [] -> error "Choice: No value selected."

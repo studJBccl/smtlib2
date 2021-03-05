@@ -8,6 +8,7 @@ import Language.SMTLib2.Composite.Null
 import Data.Map.Strict (Map)
 import qualified Data.Map.Strict as Map
 import Data.GADT.Show
+import Data.Type.Equality ((:~:)(Refl))
 import Data.GADT.Compare
 import Text.Show
 import Data.List (foldl')

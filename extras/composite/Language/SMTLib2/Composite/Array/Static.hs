@@ -7,6 +7,7 @@ import Language.SMTLib2.Composite.Domains
 import Data.Map (Map)
 import qualified Data.Map as Map
 import Data.GADT.Compare
+import Data.Type.Equality ((:~:)(Refl))
 import Data.GADT.Show
 import Text.Show
 import Data.Functor.Identity

@@ -15,7 +15,8 @@ import Control.Monad.State
 import Control.Monad.Reader
 import Data.GADT.Compare as GComp
 import Data.GADT.Show
-import Data.Dependent.Map (DMap,DSum(..))
+import Data.Dependent.Map (DMap)
+import Data.Dependent.Sum (DSum(..))
 import qualified Data.Dependent.Map as DMap
 import Data.Functor.Identity
 import Data.Proxy

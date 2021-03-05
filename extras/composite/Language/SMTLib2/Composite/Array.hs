@@ -13,6 +13,7 @@ import qualified Language.SMTLib2.Internals.Type.List as List
 
 import Data.GADT.Show
 import Data.GADT.Compare
+import Data.Type.Equality ((:~:)(Refl))
 import Data.Functor.Identity
 import Control.Monad.Reader
 import Control.Monad.Except

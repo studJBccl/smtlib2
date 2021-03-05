@@ -1,3 +1,5 @@
+{-# language UndecidableInstances #-}
+
 module Language.SMTLib2.Composite.Singleton where
 
 import Language.SMTLib2
@@ -9,6 +11,7 @@ import Language.SMTLib2.Composite.Domains
 import Language.SMTLib2.Composite.Null
 
 import Data.GADT.Compare
+import Data.Type.Equality ((:~:)(Refl))
 import Data.GADT.Show
 import Data.Maybe
 import Data.Constraint

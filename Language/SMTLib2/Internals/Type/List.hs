@@ -4,6 +4,7 @@ import Language.SMTLib2.Internals.Type.Nat
 
 import Prelude hiding (head,tail,length,mapM,insert,drop,take,last,reverse,map,traverse,concat,replicate)
 import Data.GADT.Compare
+import Data.Type.Equality ((:~:)(Refl))
 import Data.GADT.Show
 import Language.Haskell.TH
 
