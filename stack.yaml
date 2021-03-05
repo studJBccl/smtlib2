@@ -1,12 +1,18 @@
-resolver: lts-5.13
+resolver: lts-17.5
+
 packages:
-  - .
-  - backends/pipe
-  - backends/debug
-  - backends/timing
-  - extras/emulated-modulus
-  - extras/quickcheck
-  - extras/composite
+- .
+- backends/pipe
+- backends/debug
+- backends/timing
+- extras/emulated-modulus
+- extras/quickcheck
+- extras/composite
+
 extra-deps:
-  - atto-lisp-0.2.2.2
-  - cabal-test-quickcheck-0.1.6
+- dependent-map-0.4.0.0
+- dependent-sum-0.7.1.0
+- constraints-extras-0.3.0.2
+- cabal-test-quickcheck-0.1.8.2
+- git: https://github.com/jwaldmann/atto-lisp
+  commit: 46f087752dc03259a45c132e688e59f9de9f7777
