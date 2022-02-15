@@ -11,7 +11,7 @@ import Data.GADT.Compare
 import Data.GADT.Show
 import Data.Type.Equality ((:~:)(Refl))
 import Data.List (genericLength)
-import Data.Bits
+import Data.Bits (xor, (.&.), (.|.))
 import Data.Dependent.Map (DMap)
 import qualified Data.Dependent.Map as DMap
 import Data.Functor.Identity
