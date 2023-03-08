@@ -13,6 +13,7 @@ import Control.Monad.Trans
 import Control.Monad.State
 import Control.Monad.Except
 import Control.Monad.Writer
+import Data.Monoid
 
 data ProofResult (e :: Type -> *)
   = ProofExpr (e BoolType)
