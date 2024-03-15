@@ -52,7 +52,7 @@ module Language.SMTLib2 (
   -- *** Datatype constants
   cdt,
   -- ** Quantification
-  exists, forall,
+  exists, forall_,
   -- ** Let binding
   let',
   -- ** Functions

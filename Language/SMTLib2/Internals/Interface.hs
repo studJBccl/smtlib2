@@ -6,7 +6,7 @@ module Language.SMTLib2.Internals.Interface
         pattern ConstBool,pattern ConstInt,pattern ConstReal,pattern ConstBV,
         constant,asConstant,true,false,cbool,cint,creal,cbv,cbvUntyped,cbvUntyped',cdt,
         -- ** Quantification
-        exists,forall,
+        exists,forall_,
         -- ** Let
         let',
         -- ** Functions
@@ -1079,10 +1079,10 @@ exists tps f = embedQuantifier Exists tps (\vars -> do
                                               nvars <- List.traverse (\var -> embed $ pure $ QVar var) vars
                                               f nvars)
 
-forall :: (Embed m e,Monad m) => List Repr tps
+forall_ :: (Embed m e,Monad m) => List Repr tps
        -> (forall m e. (Embed m e,Monad m) => List e tps -> m (e BoolType))
        -> m (e BoolType)
-forall tps f = embedQuantifier Forall tps (\vars -> do
+forall_ tps f = embedQuantifier Forall tps (\vars -> do
                                               nvars <- List.traverse (\var -> embed $ pure $ QVar var) vars
                                               f nvars)
 
