@@ -38,6 +38,9 @@ instance Backend b => MonadState (SMTState b) (SMT b) where
 instance (Backend b,MonadIO (SMTMonad b)) => MonadIO (SMT b) where
   liftIO act = SMT (liftIO act)
 
+instance Backend b => MonadFail (SMT b) where
+  fail msg = error $ "Communication with solver failed: " ++ msg
+
 -- | Execute an SMT action on a given backend.
 withBackend :: Backend b => SMTMonad b b -- ^ An action that creates a fresh backend.
             -> SMT b a                   -- ^ The SMT action to perform.
