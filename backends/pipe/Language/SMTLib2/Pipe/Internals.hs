@@ -873,7 +873,7 @@ withEq tp [] f = f Zero Nil
 withEq tp (_:xs) f = withEq tp xs $
                      \n args -> f (Succ n) (tp ::: args)
                                              
-lispToFunction :: LispParser v qv fun fv lv e
+lispToFunction :: forall v qv fun fv lv e. LispParser v qv fun fv lv e
                -> Maybe Sort -> L.Lisp -> LispParse (ParsedFunction fun)
 lispToFunction _ _ (L.Symbol "=")
   = return $ ParsedFunction (==0)
@@ -1085,12 +1085,7 @@ lispToFunction rf sort (L.List [sym,lispToList -> Just sig,tp]) = do
   rsig <- lispToSorts rf sig $
           \sig' -> return $ runIdentity $ List.toList (\tp -> return $ Just (Sort tp)) sig'
   return $ ParsedFunction (const False) (\_ -> getParsedFunction fun rsig)
-lispToFunction rf sort (L.Symbol name)
-  = parseFunction rf sort name
-    (p . Expr.Fun)
-    getCon
-    getTest
-    getField
+lispToFunction (LispParser pf _ _ _ _ _) sort (L.Symbol name) = pf sort name (p . Expr.Fun) getCon getTest getField
   where
     p f = return $ ParsedFunction (const False) (const (return $ AnyFunction f))
 
