@@ -26,7 +26,7 @@ import Data.GADT.Show
 #if !MIN_VERSION_base(4,8,0)
 import Data.Monoid
 #endif
-import Data.Foldable (foldlM)
+import Data.Foldable (foldlM, toList)
 import Control.Monad.Except
 import Data.Traversable
 import qualified GHC.TypeLits as TL
@@ -44,6 +44,7 @@ import Data.Ratio
 
 import Control.Monad.Identity
 import Control.Monad.State
+import Data.Bifunctor (first)
 
 data PipeDatatype = forall a. IsDatatype a => PipeDatatype (Proxy a)
 
@@ -352,16 +353,16 @@ renderCheckSat tactic limits
 renderDeclareDatatype' :: Integer
                        -> [(T.Text,[(T.Text,[(T.Text,L.Lisp)])])]
                        -> L.Lisp
-renderDeclareDatatype' _ [] = L.Symbol "()"
+renderDeclareDatatype' _ [] = L.Symbol ""
 renderDeclareDatatype' npar ((dtName, cons):_)
     = L.List [L.Symbol "declare-datatypes"
              ,L.List [L.List [L.Symbol dtName, L.Symbol $ T.pack $ show npar]]
              ,L.List [L.Symbol "par"
                      ,L.List [L.Symbol $ T.pack $ "a" ++ show i | i <- [0..npar-1]]
                      ,L.List [L.List [L.Symbol con
-                                     ,L.List [L.Symbol field, tp]
+                                     ,L.List $ concatMap toList $ map (first L.Symbol) fs
                                      ]
-                             |(con,fs) <- cons, (field,tp) <- fs]
+                             |(con,fs) <- cons]
                      ]
              ]                       
 
