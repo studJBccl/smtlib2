@@ -357,14 +357,18 @@ renderDeclareDatatype' _ [] = L.Symbol ""
 renderDeclareDatatype' npar ((dtName, cons):_)
     = L.List [L.Symbol "declare-datatypes"
              ,L.List [L.List [L.Symbol dtName, L.Symbol $ T.pack $ show npar]]
-             ,L.List [L.Symbol "par"
-                     ,L.List [L.Symbol $ T.pack $ "a" ++ show i | i <- [0..npar-1]]
+             ,L.List [L.Symbol par
+                     ,if not (null pars) then L.List pars else L.Symbol ""
                      ,L.List [L.List [L.Symbol con
-                                     ,L.List $ concatMap toList $ map (first L.Symbol) fs
+                                     ,let conFs = conFields fs in if not (null conFs) then L.List conFs else L.Symbol ""
                                      ]
                              |(con,fs) <- cons]
                      ]
-             ]                       
+             ]
+  where
+    par = if npar > 0 then "par" else ""
+    pars = [L.Symbol $ T.pack $ "a" ++ show i | i <- [0..npar-1]]
+    conFields fs = concatMap toList $ map (first L.Symbol) fs
 
 renderDeclareDatatype :: Map String Int -> TypeRegistry T.Text T.Text T.Text -> [AnyDatatype]
                       -> (L.Lisp,Map String Int,TypeRegistry T.Text T.Text T.Text)
