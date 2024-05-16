@@ -1299,6 +1299,7 @@ lispToValue b hint l = case runExcept $ lispToConstant l of
 lispToConstant :: L.Lisp -> LispParse AnyValue
 lispToConstant (L.Symbol "true") = return (AnyValue (BoolValue True))
 lispToConstant (L.Symbol "false") = return (AnyValue (BoolValue False))
+lispToConstant (L.Symbol "real.pi") = return (AnyValue (RealValue (toRational @Double pi)))
 lispToConstant (lispToNumber -> Just n) = return (AnyValue (IntValue n))
 lispToConstant (lispToReal -> Just n) = return (AnyValue (RealValue n))
 lispToConstant (lispToBitVec -> Just (val,sz))
