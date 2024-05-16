@@ -16,7 +16,7 @@ Source-Repository head
 
 Library
   Build-Depends: smtlib2 >= 1.0 && < 1.1, base >=4 && <5, text, containers, process, atto-lisp >=0.2, attoparsec, mtl, bytestring, blaze-builder, dependent-sum
-  Extensions: GADTs,FlexibleContexts,FlexibleInstances,ExistentialQuantification,KindSignatures,DataKinds,TypeFamilies,AllowAmbiguousTypes,TypeOperators,MultiParamTypeClasses,OverloadedStrings,ScopedTypeVariables,RankNTypes,GeneralizedNewtypeDeriving,ViewPatterns,CPP,StandaloneDeriving,DeriveDataTypeable
+  Extensions: GADTs,FlexibleContexts,FlexibleInstances,ExistentialQuantification,KindSignatures,DataKinds,TypeFamilies,AllowAmbiguousTypes,TypeOperators,MultiParamTypeClasses,OverloadedStrings,ScopedTypeVariables,RankNTypes,GeneralizedNewtypeDeriving,ViewPatterns,CPP,StandaloneDeriving,DeriveDataTypeable, TypeApplications
   GHC-Options: -fwarn-unused-imports
   Exposed-Modules:
     Language.SMTLib2.Pipe

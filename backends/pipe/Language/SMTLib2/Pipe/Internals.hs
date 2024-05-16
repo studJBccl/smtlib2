@@ -1,3 +1,5 @@
+{-# LANGUAGE TypeApplications #-}
+
 module Language.SMTLib2.Pipe.Internals where
 
 import Language.SMTLib2.Internals.Backend as B
