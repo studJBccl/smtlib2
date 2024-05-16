@@ -1114,7 +1114,7 @@ transcendental name arg = do
   tf `fun` (arg ::: Nil)
 
 sqrtS :: B.Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
-sqrtS arg = assert (arg .>=. creal 0) >> transcendental "sqrt" arg
+sqrtS arg = B.assert (arg .>=. creal 0) >> transcendental "sqrt" arg
 
 expS :: B.Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
 expS = transcendental "exp"
@@ -1138,19 +1138,19 @@ cotS :: B.Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
 cotS = transcendental "cot"
 
 asinS :: B.Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
-asinS arg = assert (arg .>=. creal (-1) .&. arg .<=. creal 1) >> transcendental "arcsin" arg
+asinS arg = B.assert (arg .>=. creal (-1) .&. arg .<=. creal 1) >> transcendental "arcsin" arg
 
 acosS :: B.Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
-acosS arg = assert (arg .>=. creal (-1) .&. arg .<=. creal 1) >> transcendental "arccos" arg
+acosS arg = B.assert (arg .>=. creal (-1) .&. arg .<=. creal 1) >> transcendental "arccos" arg
 
 atanS :: B.Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
 atanS = transcendental "arctan"
 
 asecS :: B.Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
-asecS arg = assert (xor' [arg .<=. creal (-1), arg .>=. creal 1]) >> transcendental "arcsec" arg
+asecS arg = B.assert (xor' [arg .<=. creal (-1), arg .>=. creal 1]) >> transcendental "arcsec" arg
 
 acscS :: B.Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
-acscS arg = assert (xor' [arg .<=. creal (-1), arg .>=. creal 1]) >> transcendental "arccsc" arg
+acscS arg = B.assert (xor' [arg .<=. creal (-1), arg .>=. creal 1]) >> transcendental "arccsc" arg
 
 acotS :: B.Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
 acotS = transcendental "arccot"
