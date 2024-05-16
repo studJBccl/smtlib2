@@ -1,3 +1,5 @@
+{-# LANGUAGE InstanceSigs #-}
+
 module Language.SMTLib2.Internals.Interface
        (Same(),IsSMTNumber(),HasMonad(..),
         -- * Expressions
@@ -634,57 +636,45 @@ abs' x = embed $ Abs <$> embedM x
 {-# INLINEABLE abs' #-}
 
 -- TODO: The following instances cause overlap:
-{-instance (Embed m e) => Num (m (e IntType)) where
-  fromInteger x = embed $ E.Const $ smtFromInteger x
-  (+) x y = do
-    x' <- x
-    y' <- y
-    embed $ x' :+: y'
-  (-) x y = do
-    x' <- x
-    y' <- y
-    embed $ x' :-: y'
-  (*) x y = do
-    x' <- x
-    y' <- y
-    embed $ x' :*: y'
-  negate x = x >>= embed.Neg
-  abs x = x >>= embed.Abs
-  signum x = do
-    x' <- x
-    one <- embed $ E.Const (IntValue 1)
-    negOne <- embed $ E.Const (IntValue (-1))
-    zero <- embed $ E.Const (IntValue 0)
-    ltZero <- embed $ x' :<: zero
-    gtZero <- embed $ x' :>: zero
-    cond1 <- embed $ App (E.ITE int) (ltZero ::: negOne ::: zero ::: Nil)
-    embed $ App (E.ITE int) (gtZero ::: one ::: cond1 ::: Nil)
+--instance (Embed m e) => Num (m (e IntType)) where
+--  fromInteger x = embed $ E.Const $ smtFromInteger x
+--  (+) x y = do
+--    x' <- x
+--    y' <- y
+--    embed $ x' :+: y'
+--  (-) x y = do
+--    x' <- x
+--    y' <- y
+--    embed $ x' :-: y'
+--  (*) x y = do
+--    x' <- x
+--    y' <- y
+--    embed $ x' :*: y'
+--  negate x = x >>= embed.Neg
+--  abs x = x >>= embed.Abs
+--  signum x = do
+--    x' <- x
+--    one <- embed $ E.Const (IntValue 1)
+--    negOne <- embed $ E.Const (IntValue (-1))
+--    zero <- embed $ E.Const (IntValue 0)
+--    ltZero <- embed $ x' :<: zero
+--    gtZero <- embed $ x' :>: zero
+--    cond1 <- embed $ App (E.ITE int) (ltZero ::: negOne ::: zero ::: Nil)
+--    embed $ App (E.ITE int) (gtZero ::: one ::: cond1 ::: Nil)
 
-instance (Embed m e) => Num (m (e RealType)) where
-  fromInteger x = embed $ E.Const $ smtFromInteger x
-  (+) x y = do
-    x' <- x
-    y' <- y
-    embed $ x' :+: y'
-  (-) x y = do
-    x' <- x
-    y' <- y
-    embed $ x' :-: y'
-  (*) x y = do
-    x' <- x
-    y' <- y
-    embed $ x' :*: y'
-  negate x = x >>= embed.Neg
-  abs x = x >>= embed.Abs
+-- Can adding HasMonad help?
+instance (Embed m e, Monad m) => Num (m (e RealType)) where
+  fromInteger = creal . toRational
+  (+) = (.+.)
+  (-) = (.-.)
+  (*) = (.*.)
+  negate = neg
+  abs = abs'
   signum x = do
-    x' <- x
-    one <- embed $ E.Const (smtFromInteger 1)
-    negOne <- embed $ Neg one
-    zero <- embed $ E.Const (smtFromInteger 0)
-    ltZero <- embed $ x' :<: zero
-    gtZero <- embed $ x' :>: zero
-    cond1 <- embed $ App (E.ITE real) (ltZero ::: negOne ::: zero ::: Nil)
-    embed $ App (E.ITE real) (gtZero ::: one ::: cond1 ::: Nil) -}
+    pz <- creal (-1)
+    z  <- creal 0
+    sz <- creal 1
+    ite (x .==. z) z $ ite (x .<. z) pz sz
 
 rem',div',mod' :: (Embed m e,HasMonad a,HasMonad b,
                    MatchMonad a m,MatchMonad b m,
@@ -709,13 +699,9 @@ infixl 7 `div'`, `rem'`, `mod'`
 
 infixl 7 ./.
 
--- TODO: The following instances cause overlap:
-{- instance Embed m e => Fractional (m (e RealType)) where
-  (/) x y = do
-    x' <- x
-    y' <- y
-    embed $ x' :/: y'
-  fromRational r = embed $ E.Const $ RealValue r -}
+instance (Embed m e, Monad m) => Fractional (m (e RealType)) where
+  (/) = (./.)
+  fromRational = creal
 
 not' :: (Embed m e,HasMonad a,MatchMonad a m,MonadResult a ~ e BoolType)
      => a -> m (e BoolType)
