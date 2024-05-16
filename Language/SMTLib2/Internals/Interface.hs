@@ -1104,13 +1104,13 @@ let' args body = embed $ E.Let args <$> embedM body
 -- | Solver-internal representation of pi
 piS :: forall b. B.Backend b => SMT b (B.Expr b RealType)
 piS = do
-  tf <- builtIn "real.pi" Nil real
+  tf <- B.builtIn "real.pi" Nil real
   tf `fun` (Nil :: List (B.Expr b) '[])
 
 -- | Solver-internal transcendental functions
 transcendental :: B.Backend b => String -> B.Expr b RealType -> SMT b (B.Expr b RealType)
 transcendental name arg = do
-  tf <- builtIn name (real ::: Nil) real
+  tf <- B.builtIn name (real ::: Nil) real
   tf `fun` (arg ::: Nil)
 
 sqrtS :: B.Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
