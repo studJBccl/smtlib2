@@ -1102,10 +1102,10 @@ let' :: (Embed m e,Monad m,HasMonad a,MatchMonad a m,MonadResult a ~ e tp)
 let' args body = embed $ E.Let args <$> embedM body
 
 -- | Solver-internal representation of pi
-piS :: forall b. Backend b => SMT b (B.Expr b RealType)
+piS :: forall b. B.Backend b => SMT b (B.Expr b RealType)
 piS = do
   tf <- builtIn "real.pi" Nil real
-  tf `fun` (Nil :: List (Expr b) '[])
+  tf `fun` (Nil :: List (B.Expr b) '[])
 
 -- | Solver-internal transcendental functions
 transcendental :: B.Backend b => String -> B.Expr b RealType -> SMT b (B.Expr b RealType)
