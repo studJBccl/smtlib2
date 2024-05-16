@@ -1108,49 +1108,49 @@ piS = do
   tf `fun` (Nil :: List (Expr b) '[])
 
 -- | Solver-internal transcendental functions
-transcendental :: Backend b => String -> B.Expr b RealType -> SMT b (B.Expr b RealType)
+transcendental :: B.Backend b => String -> B.Expr b RealType -> SMT b (B.Expr b RealType)
 transcendental name arg = do
   tf <- builtIn name (real ::: Nil) real
   tf `fun` (arg ::: Nil)
 
-sqrtS :: Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
+sqrtS :: B.Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
 sqrtS arg = assert (arg .>=. creal 0) >> transcendental "sqrt" arg
 
-expS :: Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
+expS :: B.Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
 expS = transcendental "exp"
 
-sinS :: Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
+sinS :: B.Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
 sinS = transcendental "sin"
 
-cosS :: Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
+cosS :: B.Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
 cosS = transcendental "cos"
 
-tanS :: Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
+tanS :: B.Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
 tanS = transcendental "tan"
 
-secS :: Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
+secS :: B.Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
 secS = transcendental "sec"
 
-cscS :: Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
+cscS :: B.Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
 cscS = transcendental "csc"
 
-cotS :: Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
+cotS :: B.Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
 cotS = transcendental "cot"
- 
-asinS :: Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
+
+asinS :: B.Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
 asinS arg = assert (arg .>=. creal (-1) .&. arg .<=. creal 1) >> transcendental "arcsin" arg
 
-acosS :: Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
+acosS :: B.Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
 acosS arg = assert (arg .>=. creal (-1) .&. arg .<=. creal 1) >> transcendental "arccos" arg
 
-atanS :: Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
+atanS :: B.Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
 atanS = transcendental "arctan"
 
-asecS :: Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
+asecS :: B.Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
 asecS arg = assert (xor' [arg .<=. creal (-1), arg .>=. creal 1]) >> transcendental "arcsec" arg
 
-acscS :: Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
+acscS :: B.Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
 acscS arg = assert (xor' [arg .<=. creal (-1), arg .>=. creal 1]) >> transcendental "arccsc" arg
 
-acotS :: Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
+acotS :: B.Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
 acotS = transcendental "arccot"
