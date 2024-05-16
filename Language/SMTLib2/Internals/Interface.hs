@@ -72,6 +72,7 @@ import qualified Language.SMTLib2.Internals.Type.List as List
 import Language.SMTLib2.Internals.Expression hiding (Function(..),OrdOp(..),ArithOp(..),ArithOpInt(..),LogicOp(..),BVCompOp(..),BVBinOp(..),BVUnOp(..),Const,Var,arith,plus,minus,mult,abs')
 import qualified Language.SMTLib2.Internals.Expression as E
 import qualified Language.SMTLib2.Internals.Backend as B
+import Language.SMTLib2.Internals.Monad
 import Language.SMTLib2.Internals.Embed
 
 import Data.Constraint
