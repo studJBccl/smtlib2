@@ -1138,19 +1138,19 @@ cotS :: B.Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
 cotS = transcendental "cot"
 
 asinS :: B.Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
-asinS arg = B.assert (arg .>=. creal (-1) .&. arg .<=. creal 1) >> transcendental "arcsin" arg
+asinS = transcendental "arcsin"
 
 acosS :: B.Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
-acosS arg = B.assert (arg .>=. creal (-1) .&. arg .<=. creal 1) >> transcendental "arccos" arg
+acosS = transcendental "arccos"
 
 atanS :: B.Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
 atanS = transcendental "arctan"
 
 asecS :: B.Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
-asecS arg = B.assert (xor' [arg .<=. creal (-1), arg .>=. creal 1]) >> transcendental "arcsec" arg
+asecS = transcendental "arcsec"
 
 acscS :: B.Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
-acscS arg = B.assert (xor' [arg .<=. creal (-1), arg .>=. creal 1]) >> transcendental "arccsc" arg
+acscS = transcendental "arccsc"
 
 acotS :: B.Backend b => B.Expr b RealType -> SMT b (B.Expr b RealType)
 acotS = transcendental "arccot"
