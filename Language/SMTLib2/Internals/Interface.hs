@@ -635,62 +635,36 @@ abs' :: (Embed m e,HasMonad a,MatchMonad a m,MonadResult a ~ e tp,IsSMTNumber tp
 abs' x = embed $ Abs <$> embedM x
 {-# INLINEABLE abs' #-}
 
--- TODO: The following instances cause overlap:
---instance (Embed m e) => Num (m (e IntType)) where
---  fromInteger x = embed $ E.Const $ smtFromInteger x
---  (+) x y = do
---    x' <- x
---    y' <- y
---    embed $ x' :+: y'
---  (-) x y = do
---    x' <- x
---    y' <- y
---    embed $ x' :-: y'
---  (*) x y = do
---    x' <- x
---    y' <- y
---    embed $ x' :*: y'
---  negate x = x >>= embed.Neg
---  abs x = x >>= embed.Abs
---  signum x = do
---    x' <- x
---    one <- embed $ E.Const (IntValue 1)
---    negOne <- embed $ E.Const (IntValue (-1))
---    zero <- embed $ E.Const (IntValue 0)
---    ltZero <- embed $ x' :<: zero
---    gtZero <- embed $ x' :>: zero
---    cond1 <- embed $ App (E.ITE int) (ltZero ::: negOne ::: zero ::: Nil)
---    embed $ App (E.ITE int) (gtZero ::: one ::: cond1 ::: Nil)
-
 -- TODO: Can adding HasMonad help?
-instance (Embed m e, Monad m) => Num (m (e RealType)) where
-  fromInteger = creal . toRational
+instance (Embed m e, Monad m, IsSMTNumber tp) => Num (m (e tp)) where
+  fromInteger = constant . smtFromInteger
   (+) = (.+.)
   (-) = (.-.)
   (*) = (.*.)
   negate = neg
   abs = abs'
-  signum x = do
-    pz <- creal (-1)
-    z  <- creal 0
-    sz <- creal 1
-    ite (x .==. z) z $ ite (x .<. z) pz sz
+  signum x =
+    let pz :: m (e tp) = fromInteger (-1)
+        z  :: m (e tp) = fromInteger 0
+        sz :: m (e tp) = fromInteger 1
+     in ite (x .==. z) z $ ite (x .<. z) pz sz
 
-instance (Embed m e, Monad m, Num (m (e RealType)), forall b. Num (t b), Traversable t) => Num (m (t (e RealType))) where
-  fromInteger = traverse fromInteger . fromInteger
-  (+) = numBinOpM (+)
-  (-) = numBinOpM (-)
-  (*) = numBinOpM (*)
-  negate = numUnOpM negate
-  abs = numUnOpM abs
-  signum = numUnOpM signum
-
-numBinOpM f x y = do
-  x' <- x
-  y' <- y
-  sequence $ fmap return x' `f` fmap return y'
-
-numUnOpM f x = x >>= sequence . f . fmap return
+-- FIXME: Overlapping instances
+--instance (Embed m e, Monad m, Num (m (e RealType)), forall b. Num (t b), Traversable t) => Num (m (t (e RealType))) where
+--  fromInteger = traverse fromInteger . fromInteger
+--  (+) = numBinOpM (+)
+--  (-) = numBinOpM (-)
+--  (*) = numBinOpM (*)
+--  negate = numUnOpM negate
+--  abs = numUnOpM abs
+--  signum = numUnOpM signum
+--
+--numBinOpM f x y = do
+--  x' <- x
+--  y' <- y
+--  sequence $ fmap return x' `f` fmap return y'
+--
+--numUnOpM f x = x >>= sequence . f . fmap return
 
 instance (Embed m e, Monad m) => Fractional (m (e RealType)) where
   (/) = (./.)
