@@ -1,4 +1,4 @@
-{-# LANGUAGE InstanceSigs #-}
+{-# LANGUAGE QuantifiedConstraints #-}
 
 module Language.SMTLib2.Internals.Interface
        (Same(),IsSMTNumber(),HasMonad(..),
@@ -662,7 +662,7 @@ abs' x = embed $ Abs <$> embedM x
 --    cond1 <- embed $ App (E.ITE int) (ltZero ::: negOne ::: zero ::: Nil)
 --    embed $ App (E.ITE int) (gtZero ::: one ::: cond1 ::: Nil)
 
--- Can adding HasMonad help?
+-- TODO: Can adding HasMonad help?
 instance (Embed m e, Monad m) => Num (m (e RealType)) where
   fromInteger = creal . toRational
   (+) = (.+.)
@@ -675,6 +675,26 @@ instance (Embed m e, Monad m) => Num (m (e RealType)) where
     z  <- creal 0
     sz <- creal 1
     ite (x .==. z) z $ ite (x .<. z) pz sz
+
+instance (Embed m e, Monad m, Num (m (e RealType)), forall b. Num (t b), Traversable t) => Num (m (t (e RealType))) where
+  fromInteger = traverse fromInteger . fromInteger
+  (+) = numBinOpM (+)
+  (-) = numBinOpM (-)
+  (*) = numBinOpM (*)
+  negate = numUnOpM negate
+  abs = numUnOpM abs
+  signum = numUnOpM signum
+
+numBinOpM f x y = do
+  x' <- x
+  y' <- y
+  sequence $ fmap return x' `f` fmap return y'
+
+numUnOpM f x = x >>= sequence . f . fmap return
+
+instance (Embed m e, Monad m) => Fractional (m (e RealType)) where
+  (/) = (./.)
+  fromRational = creal
 
 rem',div',mod' :: (Embed m e,HasMonad a,HasMonad b,
                    MatchMonad a m,MatchMonad b m,
@@ -698,10 +718,6 @@ infixl 7 `div'`, `rem'`, `mod'`
 {-# INLINEABLE (./.) #-}
 
 infixl 7 ./.
-
-instance (Embed m e, Monad m) => Fractional (m (e RealType)) where
-  (/) = (./.)
-  fromRational = creal
 
 not' :: (Embed m e,HasMonad a,MatchMonad a m,MonadResult a ~ e BoolType)
      => a -> m (e BoolType)
